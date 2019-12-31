@@ -6,14 +6,27 @@ async function main() {
     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     try {
         await client.connect()
-        await createListing(
+        await createMultipleListings(
             client,
+            [{
+                name: 'Drew',
+                details: 'coffee',
+                location: 'Thunderbird',
+            },
             {
-                name: "Doug",
-                details: "PM role",
-                location: "Epoch",
-            }
+                name: 'Don',
+                details: 'lunch',
+                location: 'Cosmo'
+            }]
         )
+        // await createListing(
+        //     client,
+        //     {
+        //         name: "Doug",
+        //         details: "PM role",
+        //         location: "Epoch",
+        //     }
+        // )
         // await listDatabases(client)
     } catch (e) {
         console.error(e)
@@ -27,9 +40,16 @@ main().catch(console.err)
 // adds new document into collection, called above in main function
 async function createListing(client, newListing) {
     const result = await client.db('SEI').collection('scheds').insertOne(newListing)
-    console.log(result)
+    console.log(`New listing created with the following id: ${result.insertedId}`)
 }
 
+
+async function createMultipleListings(client, newListings) {
+    const result = await client.db('SEI').collection('scheds').insertMany(newListings)
+    // console.log(newListings)
+    console.log(`${result.insertedCount} new listing(s) created with the following id(s): `)
+    console.log(result.insertedIds)
+}
 
 // lists databases to test if above function is really working
 async function listDatabases(client) {
