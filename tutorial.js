@@ -6,19 +6,20 @@ async function main() {
     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     try {
         await client.connect()
-        await createMultipleListings(
-            client,
-            [{
-                name: 'Drew',
-                details: 'coffee',
-                location: 'Thunderbird',
-            },
-            {
-                name: 'Don',
-                details: 'lunch',
-                location: 'Cosmo'
-            }]
-        )
+        await findOneListingByName(client, "Doug")
+        // await createMultipleListings(
+        //     client,
+        //     [{
+        //         name: 'Drew',
+        //         details: 'coffee',
+        //         location: 'Thunderbird',
+        //     },
+        //     {
+        //         name: 'Don',
+        //         details: 'lunch',
+        //         location: 'Cosmo'
+        //     }]
+        // )
         // await createListing(
         //     client,
         //     {
@@ -43,12 +44,22 @@ async function createListing(client, newListing) {
     console.log(`New listing created with the following id: ${result.insertedId}`)
 }
 
-
 async function createMultipleListings(client, newListings) {
     const result = await client.db('SEI').collection('scheds').insertMany(newListings)
     // console.log(newListings)
     console.log(`${result.insertedCount} new listing(s) created with the following id(s): `)
     console.log(result.insertedIds)
+}
+
+// displays first listing that corresponds to given name
+async function findOneListingByName(client, nameOfListing) {
+    const result = await client.db('SEI').collection('scheds').findOne({ name: nameOfListing })
+    if (result) {
+        console.log(`Yay! Found a listing in the collection with the name: ${nameOfListing}`)
+        console.log(result)
+    } else {
+        console.log(`No listing in the collection with the name: ${nameOfListing}`)
+    }
 }
 
 // lists databases to test if above function is really working
