@@ -6,9 +6,11 @@ async function main() {
     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     try {
         await client.connect()
-        await findOneListingByName(client, "Dan")
-        await upsertListingByName(client, "Dan", { name: "Dn" })
-        await findOneListingByName(client, "Dn")
+        await updateAllListingsToHaveLocation(client)
+
+        // await findOneListingByName(client, "Dan")
+        // await upsertListingByName(client, "Dan", { name: "Dn" })
+        // await findOneListingByName(client, "Dn")
 
         // await findOneListingByName(client, "Doug")
         // await updateListingByName(client, "Doug", { name: "Dog" })
@@ -110,6 +112,18 @@ async function upsertListingByName(client, nameOfListing, updatedListing) {
     }
 }
 
+async function updateAllListingsToHaveLocation(client) {
+    const result = await client.db('SEI').collection('scheds').updateMany({ location: { $exists: false } },
+        { $set: { location: "Unknown" } }
+    )
+    console.log(`${result.matchedCount} document(s) matched the query criteria`)
+    console.log(`${result.modifiedCount} document(s) was/were updated`)
+}
+
+
+async function deleteListingByName(client, nameOfListing) {
+
+}
 
 // lists databases to test if above function is really working
 async function listDatabases(client) {
