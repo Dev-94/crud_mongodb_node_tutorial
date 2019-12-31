@@ -6,7 +6,8 @@ async function main() {
     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     try {
         await client.connect()
-        await findOneListingByName(client, "Doug")
+        await findListingsForGivenLocation(client, 'Epoch')
+        // await findOneListingByName(client, "Doug")
         // await createMultipleListings(
         //     client,
         //     [{
@@ -59,6 +60,19 @@ async function findOneListingByName(client, nameOfListing) {
         console.log(result)
     } else {
         console.log(`No listing in the collection with the name: ${nameOfListing}`)
+    }
+}
+
+// seaches for listings with a specified location
+async function findListingsForGivenLocation(client, locationOfListing) {
+    const cursor = await client.db('SEI').collection('scheds').find({ location: locationOfListing })
+    const results = await cursor.toArray()
+    if (results.length > 0) {
+        console.log(`Yay! There are listings in the collection are specified for the location: ${locationOfListing}.`)
+        results.forEach((result) => console.log(result))
+        // console.log(results)
+    } else {
+        console.log(`No listings in the collection are specified for the location: ${locationOfListing}`)
     }
 }
 
