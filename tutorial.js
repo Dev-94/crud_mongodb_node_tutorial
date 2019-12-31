@@ -6,7 +6,15 @@ async function main() {
     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     try {
         await client.connect()
-        await findListingsForGivenLocation(client, 'Epoch')
+        await findOneListingByName(client, "Dan")
+        await upsertListingByName(client, "Dan", { name: "Dn" })
+        await findOneListingByName(client, "Dn")
+
+        // await findOneListingByName(client, "Doug")
+        // await updateListingByName(client, "Doug", { name: "Dog" })
+        // await findOneListingByName(client, "Dog")
+
+        // await findListingsForGivenLocation(client, 'Epoch')
         // await findOneListingByName(client, "Doug")
         // await createMultipleListings(
         //     client,
@@ -75,6 +83,33 @@ async function findListingsForGivenLocation(client, locationOfListing) {
         console.log(`No listings in the collection are specified for the location: ${locationOfListing}`)
     }
 }
+
+// updates single listing by name
+async function updateListingByName(client, nameOfListing, updatedListing) {
+    const result = await client.db('SEI').collection('scheds').updateOne(
+        { name: nameOfListing },
+        { $set: updatedListing }
+    )
+    console.log(`${result.matchedCount} document(s) matched the query criteria`)
+    console.log(`${result.modifiedCount} document(s) was/were updated`)
+}
+
+async function upsertListingByName(client, nameOfListing, updatedListing) {
+    const result = await client.db('SEI').collection('scheds').updateOne(
+        { name: nameOfListing },
+        { $set: updatedListing },
+        { upsert: true }
+    )
+
+    console.log(`${result.matchedCount} document(s) matched the query criteria`)
+
+    if (result.upsertedCount > 0) {
+        console.log(`One document was inserted with the id ${result.upsertedId._id}`)
+    } else {
+        console.log(`${result.modifiedCount} document(s) was/were updated`)
+    }
+}
+
 
 // lists databases to test if above function is really working
 async function listDatabases(client) {
