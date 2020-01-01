@@ -7,7 +7,7 @@ async function main() {
     try {
         await client.connect()
 
-        await deleteListingsByLocation(client, "Epoch")
+        // await deleteListingsByLocation(client, "Epoch")
 
         // await deleteListingByName(client, "Dn")
 
@@ -22,7 +22,9 @@ async function main() {
         // await findOneListingByName(client, "Dog")
 
         // await findListingsForGivenLocation(client, 'Epoch')
+
         // await findOneListingByName(client, "Doug")
+
         // await createMultipleListings(
         //     client,
         //     [{
@@ -91,7 +93,7 @@ async function findListingsForGivenLocation(client, locationOfListing) {
     }
 }
 
-// updates single listing by name
+// updates listings by specified criteria
 async function updateListingByName(client, nameOfListing, updatedListing) {
     const result = await client.db('SEI').collection('scheds').updateOne(
         { name: nameOfListing },
@@ -126,6 +128,8 @@ async function updateAllListingsToHaveLocation(client) {
 }
 
 
+
+// deletes listings that fit specified criteria
 async function deleteListingByName(client, nameOfListing) {
     const result = await client.db('SEI').collection('scheds').deleteOne({ name: nameOfListing })
     console.log(`${result.deletedCount} document(s) was/were deleted.`)
@@ -136,6 +140,9 @@ async function deleteListingsByLocation(client, nameOfLocation) {
     const result = await client.db('SEI').collection('scheds').deleteMany({ location: nameOfLocation })
     console.log(`${result.deletedCount} document(s) was/were deleted.`)
 }
+
+
+
 
 // lists databases to test if above function is really working
 async function listDatabases(client) {
