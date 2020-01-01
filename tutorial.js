@@ -6,7 +6,12 @@ async function main() {
     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     try {
         await client.connect()
-        await updateAllListingsToHaveLocation(client)
+
+        await deleteListingsByLocation(client, "Epoch")
+
+        // await deleteListingByName(client, "Dn")
+
+        // await updateAllListingsToHaveLocation(client)
 
         // await findOneListingByName(client, "Dan")
         // await upsertListingByName(client, "Dan", { name: "Dn" })
@@ -122,7 +127,14 @@ async function updateAllListingsToHaveLocation(client) {
 
 
 async function deleteListingByName(client, nameOfListing) {
+    const result = await client.db('SEI').collection('scheds').deleteOne({ name: nameOfListing })
+    console.log(`${result.deletedCount} document(s) was/were deleted.`)
+}
 
+
+async function deleteListingsByLocation(client, nameOfLocation) {
+    const result = await client.db('SEI').collection('scheds').deleteMany({ location: nameOfLocation })
+    console.log(`${result.deletedCount} document(s) was/were deleted.`)
 }
 
 // lists databases to test if above function is really working
